@@ -120,8 +120,13 @@ where
 
         ili9341.set_orientation(mode)?;
 
+        ili9341.command(Command::VCOMControl1, &[0x3e, 0x28])?;
+        ili9341.command(Command::VCOMControl2, &[0x86])?;
+        ili9341.command(Command::MemoryAccessControl, &[0x48])?;
+
         // Set pixel format to 16 bits per pixel
         ili9341.command(Command::PixelFormatSet, &[0x55])?;
+        ili9341.command(Command::FrameControlNormal, &[0x00, 0x18])?; // FOSC + 24 Clock per line
 
         ili9341.command(Command::SleepOut, &[])?;
 
@@ -313,8 +318,11 @@ impl Scroller {
 #[derive(Clone, Copy)]
 enum Command {
     SoftwareReset = 0x01,
+    VCOMControl1 = 0xc5,
+    VCOMControl2 = 0xc7,
     MemoryAccessControl = 0x36,
     PixelFormatSet = 0x3a,
+    FrameControlNormal = 0xb1,
     SleepOut = 0x11,
     DisplayOn = 0x29,
     ColumnAddressSet = 0x2a,
